@@ -56,6 +56,7 @@ contract PeerOrg {
 
     bool transferrable;
 
+    event NewUser(uint256 time, address user);
     event Withdraw(uint256 amount, string message);
 
     modifier onlyOwner() {
@@ -109,7 +110,11 @@ contract PeerOrg {
 
     function userMint() public payable {
         require(msg.value > 0);
+        if (_balances[msg.sender] == 0) {
+            emit NewUser(block.timestamp, msg.sender);
+        }
         _balances[msg.sender] += msg.value;     //user gets the same number of tokens as they deposited in ETH
+        _totalSupply += msg.value;
     }
 
     function adminWithdraw(address account, uint256 amount, string memory message) public onlyOwner {
