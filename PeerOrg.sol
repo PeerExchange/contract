@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.13;
+pragma solidity ^0.8.7;
 
 contract PeerOrg {
 
@@ -18,6 +18,7 @@ contract PeerOrg {
         string option2;
         uint256 option1Count;
         uint256 option2Count;
+        bool over;
     }
 
     bool transferrable;
@@ -44,10 +45,6 @@ contract PeerOrg {
 
     function symbol() public view virtual returns (string memory) {
         return _symbol;
-    }
-
-    function decimals() public view virtual returns (uint8) {
-        return 18;
     }
 
     function totalSupply() public view virtual returns (uint256) {
@@ -83,8 +80,8 @@ contract PeerOrg {
         if (_balances[msg.sender] == 0) {
             emit NewUser(block.timestamp, msg.sender);
         }
-        _balances[msg.sender] += msg.value;     //user gets the same number of tokens as they deposited in ETH
-        _totalSupply += msg.value;
+        _balances[msg.sender] += msg.value * 100;     //user gets the same number of tokens as they deposited in ETH * 100
+        _totalSupply += msg.value * 100;
     }
 
     function adminWithdraw(address account, uint256 amount, string memory message) public onlyOwner {
@@ -98,7 +95,7 @@ contract PeerOrg {
     }
 
     function newVote(string memory option1_, string memory option2_) public onlyOwner {
-        allVotes[voteId] = Vote(option1_, option2_, 0, 0);      //stores vote prospect
+        allVotes[voteId] = Vote(option1_, option2_, 0, 0, false);      //stores vote prospect
         voteId += 1;
     }
 
@@ -109,6 +106,7 @@ contract PeerOrg {
     function vote(uint256 id_, bool option_) public {
         require(!voters[id_][msg.sender]);  //makes sure the user hasn't voted yet
         require(_balances[msg.sender] > 0); //makes sure the user can vote
+        require(!allVotes[id_].over);       //makes sure user hasn't ended vote
 
         if (option_) {
             allVotes[id_].option1Count += _balances[msg.sender];    //true is in favor of option1
@@ -117,5 +115,13 @@ contract PeerOrg {
         }
         
         voters[id_][msg.sender] = true;     //prevents user from voting again
+    }
+
+    function getVoteId() public view virtual returns (uint256) {
+        return voteId;
+    }
+
+    function endVote(uint256 id_) public onlyOwner {
+        allVotes[id_].over = true;
     }
 }
