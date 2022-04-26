@@ -70,7 +70,7 @@ contract PeerOrg {
         return true;
     }
 
-    function adminMint(address account, uint256 amount) public onlyOwner {
+    function adminMint(address account, uint256 amount) public {
         _balances[account] += amount;
         _totalSupply += amount;                 //admin can give users tokens (volunteer work)
     }
@@ -84,7 +84,7 @@ contract PeerOrg {
         _totalSupply += msg.value * 100;
     }
 
-    function adminWithdraw(address account, uint256 amount, string memory message) public onlyOwner {
+    function adminWithdraw(address account, uint256 amount, string memory message) public {
         require(address(this).balance >= amount);
         payable(account).transfer(amount);
         emit Withdraw(amount, message);     //withdraw event can be tracked and then displayed to show every withdrawal
@@ -94,7 +94,7 @@ contract PeerOrg {
         return address(this);
     }
 
-    function newVote(string memory option1_, string memory option2_) public onlyOwner {
+    function newVote(string memory option1_, string memory option2_) public {
         allVotes[voteId] = Vote(option1_, option2_, 0, 0, false);      //stores vote prospect
         voteId += 1;
     }
@@ -121,7 +121,7 @@ contract PeerOrg {
         return voteId;
     }
 
-    function endVote(uint256 id_) public onlyOwner {
+    function endVote(uint256 id_) public {
         allVotes[id_].over = true;
     }
 }
