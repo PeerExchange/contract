@@ -1,3 +1,3 @@
 # contract
 Rinkeby:
-- Deployed PeerExchange Contract: 0xc7f263999ce1fa1e74bc11Fe006792810F5F319e
+- Deployed PeerExchange Contract: 0xD6431419BD417Af692E38d2E8a3bD9a4c201B55B
