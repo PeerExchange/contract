@@ -25,6 +25,7 @@ contract PeerOrg {
 
     event NewUser(uint256 time, address user);
     event Withdraw(uint256 amount, string message);
+    event RecurringDonation(uint256 time, address user);
 
     modifier onlyOwner() {
         require(msg.sender == _owner);
@@ -79,6 +80,8 @@ contract PeerOrg {
         require(msg.value > 0);
         if (_balances[msg.sender] == 0) {
             emit NewUser(block.timestamp, msg.sender);
+        } else {
+            emit RecurringDonation(block.timestamp, msg.sender);
         }
         _balances[msg.sender] += msg.value * 100;     //user gets the same number of tokens as they deposited in ETH * 100
         _totalSupply += msg.value * 100;
